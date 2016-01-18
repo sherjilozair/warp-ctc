@@ -121,6 +121,18 @@ ctcStatus_t get_workspace_size(const int* const label_lengths,
                                ctcComputeInfo info,
                                size_t* size_bytes);
 
+/* Simpler interface to compute_ctc_loss for CPU */
+void cpu_ctc(float* acts, 
+             float* grads,
+             int* labels, 
+             int* label_lengths,
+             int* input_lengths,
+             int alphabet_size, 
+             int minibatch,
+             float* cost,
+             int num_threads);
+
+
 #ifdef __cplusplus
 }
 #endif

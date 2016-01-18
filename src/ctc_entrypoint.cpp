@@ -167,4 +167,37 @@ ctcStatus_t get_workspace_size(const int* const label_lengths,
     return CTC_STATUS_SUCCESS;
 }
 
+void cpu_ctc(float* acts, 
+             float* grads,
+             int* labels, 
+             int* label_lengths,
+             int* input_lengths,
+             int alphabet_size, 
+             int minibatch,
+             float* cost,
+             int num_threads)
+{
+    ctcComputeInfo info;
+    info.loc = CTC_CPU;
+    info.num_threads = num_threads;
+
+    size_t cpu_alloc_bytes;
+    get_workspace_size(label_lengths, input_lengths,
+                       alphabet_size, minibatch, info,
+                       &cpu_alloc_bytes);
+
+    void* ctc_cpu_workspace = malloc(cpu_alloc_bytes);
+
+    compute_ctc_loss(acts, grads,
+                     labels, label_lengths,
+                     input_lengths,
+                     alphabet_size,
+                     minibatch,
+                     cost,
+                     ctc_cpu_workspace,
+                     info);
+
+    free(ctc_cpu_workspace);
+}
+
 }
