@@ -5,7 +5,7 @@ import ctypes.util
 
 import theano
 import theano.tensor as T
-from theano.gradient import DisconnectedType
+from theano.gradient import grad_undefined
 
 path = ctypes.util.find_library("warpctc")
 libwarpctc = npct.load_library(path, "")
@@ -75,7 +75,10 @@ class CPUCTC(theano.Op):
 
     def grad(self, inputs, output_grads):
         gradients = CPUCTCGrad()(*inputs)
-        return [gradients, DisconnectedType()(), DisconnectedType()(), DisconnectedType()()]
+        return [gradients, 
+                grad_undefined(self, 1, inputs[1]), 
+                grad_undefined(self, 2, inputs[2]), 
+                grad_undefined(self, 3, inputs[3])]
 
 if __name__ == '__main__':
     acts = np.array([[[0.1, 0.6, 0.1, 0.1, 0.1]],
